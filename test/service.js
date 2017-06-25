@@ -6,8 +6,9 @@ import $ from '../src';
 let service = $(config);
 let router = service.router();
 describe('service', function () {
-    it('service', function (done) {
-        console.log(service);
+    it('passwd', function (done) {
+        let o = service.encryptPasswd('123');
+        expect(service.checkPasswd(o, '123')).to.be.ok;
         done();
     });
     it('router', function (done) {

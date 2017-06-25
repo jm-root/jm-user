@@ -10,9 +10,9 @@ var config = {
     },
     production: {
         port: 3000,
-        mq: 'redis://redis.db',
         db: 'mongodb://mongo.db/sso',
         tableNamePrefix: 'sso_',
+        secret: 'secret',
         tokenExpire: 3600,
         disableVerifyCode: false,
         disableAutoUid: false,
