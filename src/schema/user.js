@@ -6,7 +6,7 @@ let schemaDefine = {
     account: {type: String, unique: true, sparse: true, index: true},   // 帐户
     email: {type: String, unique: true, sparse: true, index: true},     // 邮箱
     mobile: {type: String, unique: true, sparse: true, index: true},    // 手机号
-    passwd: {type: String}, // 密码，按salt加密后的密文
+    password: {type: String}, // 密码，按salt加密后的密文
     salt: {type: String},
     nick: {type: String},       // 昵称，可重复
     gender: {type: String},     // 性别

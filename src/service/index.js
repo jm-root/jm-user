@@ -88,34 +88,34 @@ export default function (opts = {}) {
 
     /**
      * 对密码加密
-     * @param {String} passwd  密码明文
+     * @param {String} password  密码明文
      * @return {Object} 返回加密后的密码对象
      * @example
      * 返回结果:{
      *  salt: 密钥
-     *  passwd: 密码密文
+     *  password: 密码密文
      * }
      */
-    model.encryptPasswd = function (passwd) {
-        if (!passwd) return null;
+    model.encryptPassword = function (password) {
+        if (!password) return null;
         let salt = createKey('');
-        passwd = hash(passwd + salt);
-        return {passwd, salt};
+        password = hash(password + salt);
+        return {password, salt};
     };
 
     /**
      * 验证密码
-     * @param {Object} passwdEncrypted 密码密钥和密文
+     * @param {Object} passwordEncrypted 密码密钥和密文
      * @example
-     * passwdEncrypted参数:{
+     * passwordEncrypted参数:{
      *  salt: 密钥(必填)
-     *  passwd: 密码密文(必填)
+     *  password: 密码密文(必填)
      * }
-     * @param {string} passwd 密码明文
+     * @param {string} password 密码明文
      * @return {boolean}
      */
-    model.checkPasswd = function (passwdEncrypted, passwd) {
-        return passwdEncrypted.passwd == hash(passwd + passwdEncrypted.salt);
+    model.checkPassword = function (passwordEncrypted, password) {
+        return passwordEncrypted.password == hash(password + passwordEncrypted.salt);
     };
 
     /**
@@ -128,18 +128,18 @@ export default function (opts = {}) {
         let self = this;
         let c = {_id: id};
 
-        if (opts.passwd && !opts.salt) {
-            let o = this.encryptPasswd(opts.passwd);
-            opts.passwd = o.passwd;
+        if (opts.password && !opts.salt) {
+            let o = this.encryptPassword(opts.password);
+            opts.password = o.password;
             opts.salt = o.salt;
         }
 
         this.update(c, opts, {}, function (err, doc) {
             if (err) {
-                cb(err, Err.FA_UPDATE_USER);
+                cb && cb(err, Err.FA_UPDATE_USER);
             } else {
                 self.emit('updateUser', id, opts, doc);
-                cb(err, doc);
+                cb && cb(err, doc);
             }
         });
         return this;
@@ -160,13 +160,11 @@ export default function (opts = {}) {
         }
         this.findById(id, function (err, doc) {
             if (err) {
-                cb(err, Err.FA_FIND_USER);
-                return self;
+                cb && cb(err, Err.FA_FIND_USER);
             }
 
             if (!doc) {
-                cb(null, Err.FA_USER_NOT_EXIST);
-                return self;
+                cb && cb(null, Err.FA_USER_NOT_EXIST);
             }
 
             if (!doc.ext) {
@@ -182,42 +180,46 @@ export default function (opts = {}) {
             doc.markModified('ext');
             doc.save(function (err, doc) {
                 if (err) {
-                    cb(err, Err.FA_SAVE_USER);
+                    cb && cb(err, Err.FA_SAVE_USER);
                 } else {
                     self.emit('updateUserExt', id, opts, doc);
-                    cb(err, doc);
+                    cb && cb(err, doc);
                 }
             });
         });
+        return this;
     };
 
     /**
      * 修改密码
-     * @param oldPasswd
-     * @param passwd
+     * @param oldPassword
+     * @param password
      * @param cb
      */
-    model.updatePasswd = function (id, oldPasswd, passwd, cb) {
+    model.updatePassword = function (id, oldPassword, password, cb) {
         let self = this;
         this.findById(id, function (err, doc) {
             if (err) {
-                return cb(err, Err.FA_FIND_USER);
+                cb && cb(err, Err.FA_FIND_USER);
+                return;
             }
 
             if (!doc) {
-                return cb(null, Err.FA_USER_NOT_EXIST);
+                cb && cb(null, Err.FA_USER_NOT_EXIST);
+                return;
             }
 
-            if (!self.checkPasswd(doc, oldPasswd)) {
-                return cb(null, Err.FA_INVALID_PASSWD);
+            if (!self.checkPassword(doc, oldPassword)) {
+                cb && cb(null, Err.FA_INVALID_PASSWD);
+                return;
             }
 
             let o = {
-                passwd: passwd,
+                password: password,
             };
             self.updateUser(id, o, cb);
         });
-        return self;
+        return this;
     };
 
     /**
@@ -253,29 +255,52 @@ export default function (opts = {}) {
 
         this.findOne({'$or': query}, function (err, doc) {
             if (err) {
-                cb(err, Err.FA_FIND_USER);
+                cb && cb(err, Err.FA_FIND_USER);
             } else {
-                cb(err, doc);
+                cb && cb(err, doc);
             }
         });
+        return this;
     };
 
     /**
      * 登陆验证
      * @param {*} username
-     * @param {String} passwd
+     * @param {String} password
      * @param cb
      */
-    model.signon = function (username, passwd, cb) {
+    model.signon = function (username, password, cb) {
         let self = this;
         this.findUser(username, function (err, doc) {
-            if (err || !doc) return cb(err, doc);
-            if (self.checkPasswd(doc, passwd)) {
-                return cb(null, {id: doc.id});
+            if (err || !doc) {
+                cb && cb(err, doc);
+                return;
             }
-            cb(null, Err.FA_INVALID_PASSWD);
+            if (self.checkPassword(doc, password)) {
+                cb && cb(null, {id: doc.id});
+                return;
+            }
+            cb && cb(null, Err.FA_INVALID_PASSWD);
         });
         return this;
     };
+
+    /**
+     * 注册
+     * @param opts
+     * @param cb
+     */
+    model.signup = function(opts, cb) {
+        var data = {};
+        _.defaults(data, opts);
+        if(data.password && !data.salt) {
+            var p = this.encryptPassword(data.password);
+            data.password = p.password;
+            data.salt = p.salt;
+        }
+        this.create(data, cb);
+        return this;
+    };
+
     return model;
 };

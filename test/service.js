@@ -8,7 +8,7 @@ let router = service.router();
 
 let user = {
     account: 'jeff',
-    passwd: '123',
+    password: '123',
     mobile: '13600000000',
     email: 'jeff@jamma.cn',
     uid: 99999999,
@@ -16,23 +16,29 @@ let user = {
 };
 
 describe('service', function () {
-    it('passwd', function (done) {
-        let o = service.encryptPasswd('123');
-        expect(service.checkPasswd(o, '123')).to.be.ok;
+    it('password', function (done) {
+        let o = service.encryptPassword('123');
+        expect(service.checkPassword(o, '123')).to.be.ok;
         done();
     });
 
     it('create user', function (done) {
-        service.find(user.account, function (err, doc) {
+        service.findOneAndRemove({account: user.account}, function (err, doc) {
             expect(err === null).to.be.ok;
-            if (doc) {
+            service.create(user, function (err, doc) {
+                expect(err === null).to.be.ok;
                 done();
-            } else {
-                service.create(user, function (err, doc) {
-                    expect(err === null).to.be.ok;
-                    done();
-                });
-            }
+            });
+        });
+    });
+
+    it('signup', function (done) {
+        service.findOneAndRemove({account: user.account}, function (err, doc) {
+            expect(err === null).to.be.ok;
+            service.signup(user, function (err, doc) {
+                expect(err === null).to.be.ok;
+                done();
+            });
         });
     });
 
@@ -66,7 +72,7 @@ describe('service', function () {
     it('updateUser', function (done) {
         service.findUser(user.account, function (err, doc) {
             expect(doc.account === user.account).to.be.ok;
-            service.updateUser(doc.id, {passwd: '123', gender: 'man'}, function (err, doc) {
+            service.updateUser(doc.id, {password: '123', gender: 'man'}, function (err, doc) {
                 expect(err === null).to.be.ok;
                 done();
             });
@@ -83,13 +89,13 @@ describe('service', function () {
         });
     });
 
-    it('updatePasswd', function (done) {
+    it('updatePassword', function (done) {
         service.findUser(user.account, function (err, doc) {
             expect(doc.account === user.account).to.be.ok;
             let id = doc.id;
-            service.updateUser(doc.id, {passwd: '123'}, function (err, doc) {
+            service.updateUser(doc.id, {password: '123'}, function (err, doc) {
                 expect(err === null).to.be.ok;
-                service.updatePasswd(id, user.passwd, '1234', function (err, doc) {
+                service.updatePassword(id, user.password, '1234', function (err, doc) {
                     expect(doc && !doc.err ).to.be.ok;
                     service.signon(user.account, '1234', function (err, doc) {
                         expect(doc && doc.id !== null).to.be.ok;
@@ -103,9 +109,9 @@ describe('service', function () {
     it('signon', function (done) {
         service.findUser(user.account, function (err, doc) {
             expect(doc.account === user.account).to.be.ok;
-            service.updateUser(doc.id, {passwd: '123'}, function (err, doc) {
+            service.updateUser(doc.id, {password: '123'}, function (err, doc) {
                 expect(err === null).to.be.ok;
-                service.signon(user.account, user.passwd, function (err, doc) {
+                service.signon(user.account, user.password, function (err, doc) {
                     expect(doc && doc.id !== null).to.be.ok;
                     done();
                 });
