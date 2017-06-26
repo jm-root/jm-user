@@ -1,6 +1,6 @@
 {
   "name": "jm-user",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "general user service",
   "main": "./lib/index",
   "scripts": {
@@ -27,7 +27,8 @@
   "dependencies": {
     "jm-dao": "^1.0.0",
     "jm-ms-daorouter": "^1.0.0",
-    "jm-server": "^1.0.1"
+    "jm-server": "^1.0.1",
+    "validator": "^7.1.0"
   },
   "devDependencies": {
     "bluebird": "^3.5.0",

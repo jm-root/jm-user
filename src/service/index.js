@@ -1,9 +1,17 @@
+import _ from 'lodash';
+import validator from 'validator';
+import bson from 'bson';
 import jm from 'jm-dao';
 import event from 'jm-event';
 import consts from '../consts';
 let Err = consts.Err;
 import schema from '../schema/user';
 import crypto from 'crypto';
+
+let isMobile = function (mobile) {
+    let pattern = /^1[3,4,5,8]{1}[0-9]{9}$/;
+    return pattern.test(mobile);
+};
 
 /**
  * user service
@@ -110,5 +118,164 @@ export default function (opts = {}) {
         return passwdEncrypted.passwd == hash(passwd + passwdEncrypted.salt);
     };
 
+    /**
+     * 更新用户信息
+     * @param {string} id
+     * @param {Object} opts
+     * @param cb
+     */
+    model.updateUser = function (id, opts, cb) {
+        let self = this;
+        let c = {_id: id};
+
+        if (opts.passwd && !opts.salt) {
+            let o = this.encryptPasswd(opts.passwd);
+            opts.passwd = o.passwd;
+            opts.salt = o.salt;
+        }
+
+        this.update(c, opts, {}, function (err, doc) {
+            if (err) {
+                cb(err, Err.FA_UPDATE_USER);
+            } else {
+                self.emit('updateUser', id, opts, doc);
+                cb(err, doc);
+            }
+        });
+        return this;
+    };
+
+    /**
+     * 更新用户扩展信息
+     * @param id
+     * @param opts
+     * @param replaceAll
+     * @param cb
+     */
+    model.updateUserExt = function (id, opts, replaceAll, cb) {
+        let self = this;
+        if (typeof replaceAll === 'function') {
+            cb = replaceAll;
+            replaceAll = false;
+        }
+        this.findById(id, function (err, doc) {
+            if (err) {
+                cb(err, Err.FA_FIND_USER);
+                return self;
+            }
+
+            if (!doc) {
+                cb(null, Err.FA_USER_NOT_EXIST);
+                return self;
+            }
+
+            if (!doc.ext) {
+                doc.ext = {};
+            }
+            let ext = doc.ext;
+            if (replaceAll) {
+                doc.ext = opts;
+            } else {
+                _.defaults(opts, ext);
+                doc.ext = opts;
+            }
+            doc.markModified('ext');
+            doc.save(function (err, doc) {
+                if (err) {
+                    cb(err, Err.FA_SAVE_USER);
+                } else {
+                    self.emit('updateUserExt', id, opts, doc);
+                    cb(err, doc);
+                }
+            });
+        });
+    };
+
+    /**
+     * 修改密码
+     * @param oldPasswd
+     * @param passwd
+     * @param cb
+     */
+    model.updatePasswd = function (id, oldPasswd, passwd, cb) {
+        let self = this;
+        this.findById(id, function (err, doc) {
+            if (err) {
+                return cb(err, Err.FA_FIND_USER);
+            }
+
+            if (!doc) {
+                return cb(null, Err.FA_USER_NOT_EXIST);
+            }
+
+            if (!self.checkPasswd(doc, oldPasswd)) {
+                return cb(null, Err.FA_INVALID_PASSWD);
+            }
+
+            let o = {
+                passwd: passwd,
+            };
+            self.updateUser(id, o, cb);
+        });
+        return self;
+    };
+
+    /**
+     * 查找一个用户
+     * @param {*} username 查找项
+     * @param cb
+     */
+    model.findUser = function (username, cb) {
+        let query = [];
+        if (typeof username === 'number' || validator.isInt(username)) {
+            if (isMobile(username)) {
+                query.push({
+                    mobile: username,
+                });
+            } else {
+                query.push({
+                    uid: username,
+                });
+            }
+        } else if (validator.isEmail(username)) {
+            query.push({
+                email: username,
+            });
+        } else if (bson.ObjectId.isValid(username)) {
+            query.push({
+                _id: username,
+            });
+        } else {
+            query.push({
+                account: username,
+            });
+        }
+
+        this.findOne({'$or': query}, function (err, doc) {
+            if (err) {
+                cb(err, Err.FA_FIND_USER);
+            } else {
+                cb(err, doc);
+            }
+        });
+    };
+
+    /**
+     * 登陆验证
+     * @param {*} username
+     * @param {String} passwd
+     * @param cb
+     */
+    model.signon = function (username, passwd, cb) {
+        let self = this;
+        this.findUser(username, function (err, doc) {
+            if (err || !doc) return cb(err, doc);
+            if (self.checkPasswd(doc, passwd)) {
+                return cb(null, {id: doc.id});
+            }
+            cb(null, Err.FA_INVALID_PASSWD);
+        });
+        return this;
+    };
     return model;
 };
