@@ -10,8 +10,7 @@ var config = {
     },
     production: {
         port: 3000,
-        db: 'mongodb://mongo.db/sso',
-        tableNamePrefix: 'sso_',
+        db: 'mongodb://mongo.db/user',
         secret: 'secret',
         tokenExpire: 3600,
         disableVerifyCode: false,
