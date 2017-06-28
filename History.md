@@ -1,5 +1,9 @@
 # History
 
+## 1.0.4 / 2017-06-28
+- promise
+- jm-dao@1.0.4
+
 ## 1.0.4 / 2017-06-26
 - signup
 - passwd -> password
