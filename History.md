@@ -1,5 +1,9 @@
 # History
 
+## 1.0.6 / 2017-06-28
+- promise
+- jm-dao@1.0.5
+
 ## 1.0.4 / 2017-06-28
 - promise
 - jm-dao@1.0.4
