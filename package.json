@@ -1,6 +1,6 @@
 {
   "name": "jm-user",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "general user service",
   "main": "./lib/index",
   "scripts": {
@@ -25,13 +25,13 @@
   },
   "homepage": "https://github.com/jm-root/jm-user",
   "dependencies": {
-    "jm-dao": "^1.0.0",
+    "bluebird": "^3.5.0",
+    "jm-dao": "^1.0.4",
     "jm-ms-daorouter": "^1.0.0",
     "jm-server": "^1.0.1",
     "validator": "^7.1.0"
   },
   "devDependencies": {
-    "bluebird": "^3.5.0",
     "babel-cli": "^6.24.1",
     "babel-plugin-add-module-exports": "^0.2.1",
     "babel-preset-env": "^1.5.1",

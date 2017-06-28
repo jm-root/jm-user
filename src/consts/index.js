@@ -1,7 +1,7 @@
 let ERRCODE = 1000;
 
 export default {
-    SequenceUserId: 'user_id',
+    SequenceUserId: 'userId',
 
     Err: {
         FA_CREATE_USER_UID: {
