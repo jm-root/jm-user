@@ -264,6 +264,7 @@ export default function (opts = {}) {
         opts.db = db;
         o.sq = jm.sequence({db: db});
         o.user = require('./user')(o, opts);
+        o.avatar = require('./avatar')(o, opts);
         o.ready = true;
         o.emit('ready');
     };
