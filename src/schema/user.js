@@ -8,6 +8,7 @@ let schemaDefine = {
     mobile: {type: String, unique: true, sparse: true, index: true},    // 手机号
     password: {type: String}, // 密码，按salt加密后的密文
     salt: {type: String},
+    wechat: {type: String},     // 微信号
     nick: {type: String},       // 昵称，可重复
     gender: {type: String},     // 性别
     country: {type: String},    // 国家
