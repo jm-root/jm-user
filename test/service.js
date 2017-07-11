@@ -33,6 +33,12 @@ let prepare = function () {
 };
 
 describe('service', function () {
+    it('t', function (done) {
+        let o = service.t('Create Uid Fail', 'zh_CN');
+        expect(o === '生成UID失败').to.be.ok;
+        done();
+    });
+
     it('password', function (done) {
         let o = service.encryptPassword('123');
         expect(service.checkPassword(o, '123')).to.be.ok;

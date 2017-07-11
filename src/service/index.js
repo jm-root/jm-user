@@ -7,6 +7,7 @@ import error from 'jm-err';
 import crypto from 'crypto';
 import Promise from 'bluebird';
 import consts from '../consts';
+import t from '../locale';
 let Err = consts.Err;
 
 let isMobile = function (mobile) {
@@ -50,6 +51,7 @@ export default function (opts = {}) {
         ready: false,
         hash: hash,
         createKey: createKey,
+        t: t,
 
         onReady: function () {
             let self = this;
