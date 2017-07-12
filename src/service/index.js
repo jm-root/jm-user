@@ -249,6 +249,7 @@ export default function (opts = {}) {
          * @return {Promise}
          */
         signup: function (opts, cb) {
+            let self = this;
             let data = {};
             _.defaults(data, opts);
             if (data.password && !data.salt) {
@@ -256,7 +257,33 @@ export default function (opts = {}) {
                 data.password = p.password;
                 data.salt = p.salt;
             }
-            return this.user.create(data, cb);
+            
+            let query = [];
+            if (data.mobile) {
+                query.push({
+                    mobile: data.mobile
+                });
+            }
+            if (data.uid) {
+                query.push({
+                    uid: data.uid
+                });
+            }
+            if (data.account) {
+                query.push({
+                    account: data.account
+                });
+            }
+            if (data.email) {
+                query.push({
+                    email: data.email
+                });
+            }
+            return this.user.findOne({'$or': query})
+                .then(function (doc) {
+                    if (doc) throw error.err(Err.FA_USER_EXIST);
+                    return self.user.create(data, cb);
+                });
         },
 
     };
