@@ -2,6 +2,7 @@ require('log4js').configure(__dirname + '/log4js.json');
 var config = {
     development: {
         port: 3000,
+        lng: 'zh_CN',
         avatarDir:  process.cwd() + '/../uploads',
         avatarPrefix: '/avatar',
         modules: {
