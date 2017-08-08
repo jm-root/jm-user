@@ -15,16 +15,6 @@ export default function (opts = {}) {
         }
         return doc;
     };
-    service.routes || (service.routes = {});
-    let routes = service.routes;
-    routes.filter_update = function (opts, cb, next) {
-        if (opts.type === 'get') return next();
-        if (opts.headers && opts.headers.acl_user) {
-            var user = opts.headers.acl_user;
-            if (opts.params.id && opts.params.id != user) return cb(null, t(Err.FA_NOPERMISSION, opts.lng));
-        }
-        next();
-    };
 
     var listOpts = opts.list || {
             conditions: {},
@@ -48,7 +38,6 @@ export default function (opts = {}) {
 
     let router = ms.router();
     this.onReady().then(() => {
-        router.use('/:id', routes.filter_update);
         router.use('/:id/avatar', avatar(service, opts));
         router.use(daorouter(service.user, {
             list: listOpts,

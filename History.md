@@ -1,5 +1,8 @@
 # History
 
+## 1.0.11 / 2017-08-08
+- remove acl_user filter
+
 ## 1.0.10 / 2017-07-31
 - acl_user
 
