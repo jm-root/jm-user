@@ -1,5 +1,8 @@
 # History
 
+## 1.0.12 / 2017-08-08
+- router /:id/exists
+
 ## 1.0.11 / 2017-08-08
 - remove acl_user filter
 

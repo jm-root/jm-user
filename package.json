@@ -1,6 +1,6 @@
 {
   "name": "jm-user",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "general user service",
   "main": "./lib/index",
   "scripts": {
@@ -29,7 +29,7 @@
     "fs-extra": "^3.0.1",
     "jm-dao": "^1.0.5",
     "jm-ms-daorouter": "^1.0.0",
-    "jm-server": "^1.0.1",
+    "jm-server": "^1.0.5",
     "validator": "^7.1.0"
   },
   "devDependencies": {
