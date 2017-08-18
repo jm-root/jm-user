@@ -1,8 +1,8 @@
-import zh_CN from './zh_CN';
+import zh_CN from './zh_CN'
 
 let lngs = {
-    zh_CN,
-};
+  zh_CN
+}
 
 /**
  * translate
@@ -11,6 +11,6 @@ let lngs = {
  * @return {String | null}
  */
 export default function (msg, lng) {
-    if (!lng || !lngs[lng]) return null;
-    return lngs[lng][msg];
+  if (!lng || !lngs[lng]) return null
+  return lngs[lng][msg]
 };
