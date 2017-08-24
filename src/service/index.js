@@ -64,15 +64,15 @@ export default function (opts = {}) {
     },
 
     /**
-         * 对密码加密
-         * @param {String} password  密码明文
-         * @return {Object} 返回加密后的密码对象
-         * @example
-         * 返回结果:{
-         *  salt: 密钥
-         *  password: 密码密文
-         * }
-         */
+     * 对密码加密
+     * @param {String} password  密码明文
+     * @return {Object} 返回加密后的密码对象
+     * @example
+     * 返回结果:{
+     *  salt: 密钥
+     *  password: 密码密文
+     * }
+     */
     encryptPassword: function (password) {
       if (!password) return null
       let salt = createKey('')
@@ -81,26 +81,26 @@ export default function (opts = {}) {
     },
 
     /**
-         * 验证密码
-         * @param {Object} passwordEncrypted 密码密钥和密文
-         * @example
-         * passwordEncrypted参数:{
-         *  salt: 密钥(必填)
-         *  password: 密码密文(必填)
-         * }
-         * @param {string} password 密码明文
-         * @return {boolean}
-         */
+     * 验证密码
+     * @param {Object} passwordEncrypted 密码密钥和密文
+     * @example
+     * passwordEncrypted参数:{
+     *  salt: 密钥(必填)
+     *  password: 密码密文(必填)
+     * }
+     * @param {string} password 密码明文
+     * @return {boolean}
+     */
     checkPassword: function (passwordEncrypted, password) {
       return passwordEncrypted.password === hash(password + passwordEncrypted.salt)
     },
 
     /**
-         * 更新用户信息
-         * @param {string} id
-         * @param {Object} opts
-         * @param cb
-         */
+     * 更新用户信息
+     * @param {string} id
+     * @param {Object} opts
+     * @param cb
+     */
     updateUser: function (id, opts, cb) {
       let c = {_id: id}
 
@@ -110,16 +110,18 @@ export default function (opts = {}) {
         opts.salt = o.salt
       }
 
+      opts.moditime = Date.now()
+
       return this.user.update(c, opts, cb)
     },
 
     /**
-         * 更新用户扩展信息
-         * @param id
-         * @param opts
-         * @param replaceAll
-         * @param cb
-         */
+     * 更新用户扩展信息
+     * @param id
+     * @param opts
+     * @param replaceAll
+     * @param cb
+     */
     updateUserExt: function (id, opts, replaceAll, cb) {
       if (typeof replaceAll === 'function') {
         cb = replaceAll
@@ -148,17 +150,18 @@ export default function (opts = {}) {
             _.defaults(opts, ext)
             doc.ext = opts
           }
+          doc.moditime = Date.now()
           doc.markModified('ext')
           return doc.save()
         })
     },
 
     /**
-         * 修改密码
-         * @param oldPassword
-         * @param password
-         * @param cb
-         */
+     * 修改密码
+     * @param oldPassword
+     * @param password
+     * @param cb
+     */
     updatePassword: function (id, oldPassword, password, cb) {
       let self = this
       this.user.findById(id)
@@ -178,10 +181,10 @@ export default function (opts = {}) {
     },
 
     /**
-         * 查找一个用户
-         * @param {*} username 查找项
-         * @param cb
-         */
+     * 查找一个用户
+     * @param {*} username 查找项
+     * @param cb
+     */
     findUser: function (username, cb) {
       let query = []
       if (typeof username === 'number' || validator.isInt(username)) {
@@ -212,11 +215,11 @@ export default function (opts = {}) {
     },
 
     /**
-         * 登陆
-         * @param {String|number|*} username
-         * @param {String} password
-         * @param cb
-         */
+     * 登陆
+     * @param {String|number|*} username
+     * @param {String} password
+     * @param cb
+     */
     signon: function (username, password, cb) {
       let self = this
       if (cb) {
@@ -238,16 +241,16 @@ export default function (opts = {}) {
     },
 
     /**
-         * 注册
-         * @example
-         * signup({
-     *     account: 'jeff',
-     *     password: '123'
-     * })
-         * @param {Object} opts - 参数
-         * @param {Function} cb - callback
-         * @return {Promise}
-         */
+      * 注册
+      * @example
+      * signup({
+      *     account: 'jeff',
+      *     password: '123'
+      * })
+      * @param {Object} opts - 参数
+      * @param {Function} cb - callback
+      * @return {Promise}
+      */
     signup: function (opts, cb) {
       let self = this
       let data = {}

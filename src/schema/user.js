@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+
 let Schema = mongoose.Schema
 
 let schemaDefine = {
@@ -21,6 +22,11 @@ let schemaDefine = {
   creator: {type: Schema.Types.ObjectId, ref: 'user'}, // 创建人,介绍人等等
   crtime: {type: Date, default: Date.now}, // 创建时间
   moditime: {type: Date}, // 修改时间
+  ip: {type: String}, // 注册时ip
+  name: {type: String}, // 真实姓名
+  address: {type: String}, // 详细地址
+  signature: {type: String}, // 签名
+  tags: [String],
   ext: Schema.Types.Mixed // 其他，保留字段
 }
 
