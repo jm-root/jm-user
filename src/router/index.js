@@ -2,7 +2,9 @@ import error from 'jm-err'
 import daorouter from 'jm-ms-daorouter'
 import avatar from './avatar'
 import MS from 'jm-ms-core'
+import mongoose from 'mongoose'
 
+let ObjectId = mongoose.Types.ObjectId
 let ms = new MS()
 let Err = error.Err
 export default function (opts = {}) {
@@ -17,7 +19,7 @@ export default function (opts = {}) {
     return doc
   }
 
-  var listOpts = opts.list || {
+  let listOpts = opts.list || {
     conditions: {},
     options: {
       sort: [{'crtime': -1}]
@@ -34,7 +36,7 @@ export default function (opts = {}) {
     }
   }
 
-  var getOpts = opts.get || {
+  let getOpts = opts.get || {
     fields: {
       salt: 0,
       password: 0
@@ -58,6 +60,9 @@ export default function (opts = {}) {
         })
       })
       .add('/', 'post', function (opts, cb) {
+        if (opts.ip) {
+          opts.data.ip = opts.ip
+        }
         service
           .signup(opts.data)
           .then(function (doc) {
@@ -67,7 +72,7 @@ export default function (opts = {}) {
             })
           })
           .catch(function (err) {
-            var doc = Err.FAIL
+            let doc = Err.FAIL
             err.code && (doc.err = err.code)
             err.message && (doc.msg = err.message)
             cb(err, t(doc, opts.lng))
@@ -82,7 +87,7 @@ export default function (opts = {}) {
             })
           })
           .catch(function (err) {
-            var doc = Err.FAIL
+            let doc = Err.FAIL
             err.code && (doc.err = err.code)
             err.message && (doc.msg = err.message)
             cb(err, t(doc, opts.lng))
@@ -97,11 +102,38 @@ export default function (opts = {}) {
             })
           })
           .catch(function (err) {
-            var doc = Err.FAIL
+            let doc = Err.FAIL
             err.code && (doc.err = err.code)
             err.message && (doc.msg = err.message)
             cb(err, t(doc, opts.lng))
           })
+      })
+      .add('/', 'get', function (opts, cb, next) {
+        // search
+        let search = opts.data.search
+        if (!search) return next()
+        let ary = []
+        // 格式化特殊字符
+        search = search.replace(/([`~!@#\$%\^\&\*\(\)_\+<>\?:"\{\},\.\\\/;'\[\]])/g, "\\$1")
+        let pattern = ".*?" + search + ".*?"
+        if (ObjectId.isValid(search)) {
+          ary.push({_id: search})
+          ary.push({ip: {$regex: pattern, $options: "i"}})
+          ary.push({account: {$regex: pattern, $options: "i"}})
+        } else if (!isNaN(search)) {
+          ary.push({uid: Number(search)})
+          ary.push({mobile: {$regex: pattern}})
+          ary.push({account: {$regex: pattern, $options: "i"}})
+        } else {
+          ary.push({account: {$regex: pattern, $options: "i"}})
+          ary.push({mobile: {$regex: pattern}})
+          ary.push({nick: {$regex: pattern, $options: "i"}})
+          ary.push({ip: {$regex: pattern, $options: "i"}})
+          ary.push({mac: {$regex: pattern, $options: "i"}})
+        }
+        opts.conditions || (opts.conditions = {})
+        opts.conditions.$or = ary
+        next()
       })
       .use(daorouter(service.user, {
         list: listOpts,
