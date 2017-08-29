@@ -8,6 +8,7 @@ import crypto from 'crypto'
 import Promise from 'bluebird'
 import consts from '../consts'
 import t from '../locale'
+
 let Err = consts.Err
 
 let isMobile = function (mobile) {
@@ -241,16 +242,16 @@ export default function (opts = {}) {
     },
 
     /**
-      * 注册
-      * @example
-      * signup({
+     * 注册
+     * @example
+     * signup({
       *     account: 'jeff',
       *     password: '123'
       * })
-      * @param {Object} opts - 参数
-      * @param {Function} cb - callback
-      * @return {Promise}
-      */
+     * @param {Object} opts - 参数
+     * @param {Function} cb - callback
+     * @return {Promise}
+     */
     signup: function (opts, cb) {
       let self = this
       let data = {}
@@ -281,6 +282,10 @@ export default function (opts = {}) {
         query.push({
           email: data.email
         })
+      }
+      // 允许游客注册
+      if (!query.length) {
+        return self.user.create(data, cb)
       }
       return this.user.findOne({'$or': query})
         .then(function (doc) {
