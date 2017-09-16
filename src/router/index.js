@@ -93,6 +93,21 @@ export default function (opts = {}) {
             cb(err, t(doc, opts.lng))
           })
       })
+      .add('/:id/password', 'post', function (opts, cb) {
+        service
+          .updatePassword(opts.params.id, opts.data.oldPassword, opts.data.password)
+          .then(function (doc) {
+            cb(null, {
+              ret: 1
+            })
+          })
+          .catch(function (err) {
+            let doc = Err.FAIL
+            err.code && (doc.err = err.code)
+            err.message && (doc.msg = err.message)
+            cb(err, t(doc, opts.lng))
+          })
+      })
       .add('/:id/ext', 'post', function (opts, cb) {
         service
           .updateUserExt(opts.params.id, opts.data)

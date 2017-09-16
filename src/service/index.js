@@ -164,8 +164,19 @@ export default function (opts = {}) {
      * @param cb
      */
     updatePassword: function (id, oldPassword, password, cb) {
+      if (cb) {
+        this.updatePassword(id, oldPassword, password)
+          .then(function (doc) {
+            cb(null, doc)
+          })
+          .catch(function (err) {
+            cb(err)
+          })
+        return this
+      }
+
       let self = this
-      this.user.findById(id)
+      return this.user.findById(id)
         .then(function (doc) {
           if (!doc) throw error.err(Err.FA_USER_NOT_EXIST)
 
@@ -178,7 +189,6 @@ export default function (opts = {}) {
           }
           return self.updateUser(id, o, cb)
         })
-      return this
     },
 
     /**

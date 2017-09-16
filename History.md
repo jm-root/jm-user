@@ -1,6 +1,9 @@
 # History
 
-## 1.0.12 / 2017-08-24
+## 1.0.17 / 2017-09-16
+- router POST /:id/password changePassword
+
+## 1.0.16 / 2017-08-24
 - router GET /?search
 - router POST / save ip
 
