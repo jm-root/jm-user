@@ -12,7 +12,7 @@ import t from '../locale'
 let Err = consts.Err
 
 let isMobile = function (mobile) {
-  let pattern = /^1[3,4,5,8]{1}[0-9]{9}$/
+  let pattern = /^1[3,4,5,7,8]{1}[0-9]{9}$/
   return pattern.test(mobile)
 }
 
