@@ -8,6 +8,8 @@ import crypto from 'crypto'
 import Promise from 'bluebird'
 import consts from '../consts'
 import t from '../locale'
+import user from './user'
+import avatar from './avatar'
 
 let Err = consts.Err
 
@@ -310,8 +312,8 @@ export default function (opts = {}) {
   let cb = function (db) {
     opts.db = db
     o.sq = jm.sequence({db: db})
-    o.user = require('./user')(o, opts)
-    o.avatar = require('./avatar')(o, opts)
+    o.user = user(o, opts)
+    o.avatar = avatar(o, opts)
     o.ready = true
     o.emit('ready')
   }

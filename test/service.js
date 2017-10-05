@@ -1,7 +1,8 @@
 import chai from 'chai'
-let expect = chai.expect
 import config from '../config'
 import $ from '../src'
+
+let expect = chai.expect
 
 let service = $(config)
 let router = service.router()

@@ -1,4 +1,4 @@
-require('log4js').configure(__dirname + '/log4js.json')
+require('log4js').configure(require('path').join(__dirname, 'log4js.json'))
 var config = {
   development: {
     port: 3000,

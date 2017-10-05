@@ -1,5 +1,11 @@
 # History
 
+## 1.0.19 / 2017-10-05
+- event support
+
+## 1.0.18 / 2017-09-20
+- support mobile prefix 17
+
 ## 1.0.17 / 2017-09-16
 - router POST /:id/password changePassword
 

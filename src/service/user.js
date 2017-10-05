@@ -2,6 +2,7 @@ import jm from 'jm-dao'
 import event from 'jm-event'
 import _schema from '../schema/user'
 import consts from '../consts'
+
 let Err = consts.Err
 
 export default function (service, opts = {}) {
@@ -30,6 +31,24 @@ export default function (service, opts = {}) {
       })
     }
   }
+
+  schema
+    .post('save', function (doc) {
+      doc && (service.emit('user.update', doc._id))
+    })
+    .post('remove', function (doc) {
+      doc && (service.emit('user.remove', doc._id))
+    })
+    .post('update', function (doc) {
+      if (!doc.result.nModified) return
+      this.model
+        .find(this._conditions)
+        .then(function (docs) {
+          docs.forEach(function (doc) {
+            service.emit('user.update', doc._id)
+          })
+        })
+    })
 
   let model = jm.dao({
     db: opts.db,
