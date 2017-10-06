@@ -30,7 +30,7 @@
     "jm-dao": "^1.0.5",
     "jm-ms-daorouter": "^1.0.0",
     "jm-server": "^1.0.5",
-    "jm-user-mqtt": "^0.0.2",
+    "jm-user-mqtt": "^0.0.3",
     "validator": "^7.1.0"
   },
   "devDependencies": {
