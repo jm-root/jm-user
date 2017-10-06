@@ -249,6 +249,7 @@ export default function (opts = {}) {
         .then(function (doc) {
           if (!doc) throw error.err(Err.FA_USER_NOT_EXIST)
           if (!self.checkPassword(doc, password)) throw error.err(Err.FA_INVALID_PASSWD)
+          self.emit('signon', {id: doc.id})
           return {id: doc.id}
         })
     },
@@ -266,6 +267,16 @@ export default function (opts = {}) {
      */
     signup: function (opts, cb) {
       let self = this
+      if (cb) {
+        this.signup(opts)
+          .then(function (doc) {
+            cb(null, doc)
+          })
+          .catch(function (err) {
+            cb(err)
+          })
+        return this
+      }
       let data = {}
       _.defaults(data, opts)
       if (data.password && !data.salt) {
@@ -297,12 +308,21 @@ export default function (opts = {}) {
       }
       // 允许游客注册
       if (!query.length) {
-        return self.user.create(data, cb)
+        return self.user
+          .create(data)
+          .then(function (doc) {
+            self.emit('signup', {id: doc.id})
+            return doc
+          })
       }
       return this.user.findOne({'$or': query})
         .then(function (doc) {
-          if (doc) throw error.err(Err.FA_USER_EXIST)
-          return self.user.create(data, cb)
+          if (doc) return Promise.reject(error.err(Err.FA_USER_EXIST))
+          return self.user.create(data)
+        })
+        .then(function (doc) {
+          self.emit('signup', {id: doc.id})
+          return doc
         })
     }
 

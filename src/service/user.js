@@ -34,10 +34,10 @@ export default function (service, opts = {}) {
 
   schema
     .post('save', function (doc) {
-      doc && (service.emit('user.update', doc._id))
+      doc && (service.emit('user.update', {id: doc.id}))
     })
     .post('remove', function (doc) {
-      doc && (service.emit('user.remove', doc._id))
+      doc && (service.emit('user.remove', {id: doc.id}))
     })
     .post('update', function (doc) {
       if (!doc.result.nModified) return
@@ -45,7 +45,7 @@ export default function (service, opts = {}) {
         .find(this._conditions)
         .then(function (docs) {
           docs.forEach(function (doc) {
-            service.emit('user.update', doc._id)
+            service.emit('user.update', {id: doc.id})
           })
         })
     })
