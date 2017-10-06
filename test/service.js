@@ -46,6 +46,21 @@ describe('service', function () {
     done()
   })
 
+  it('findOneAndUpdate', function (done) {
+    init()
+      .then(function () {
+        return service.signup(user)
+      })
+      .then(function (doc) {
+        return service.user.findOneAndUpdate({account: user.account}, {nick: 'jeff234'})
+      })
+      .then(function (doc) {
+        log(null, doc)
+        expect(doc).to.be.ok
+        done()
+      })
+  })
+
   it('create user', function (done) {
     init().then(function () {
       service.user.create(user, function (err, doc) {
@@ -240,7 +255,7 @@ describe('service', function () {
 
   it('router', function (done) {
     prepare().then(function () {
-      router.get('/', {rows: 2}, function (err, doc) {
+      router.get('/users', {rows: 2}, function (err, doc) {
         expect(doc && doc.page).to.be.ok
         done()
       })

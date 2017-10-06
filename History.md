@@ -1,5 +1,10 @@
 # History
 
+## 1.0.20 / 2017-10-06
+- using jm-user-mqtt
+- change router from /users to /user/users
+- add event signon, singup
+
 ## 1.0.19 / 2017-10-05
 - event support
 

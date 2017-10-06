@@ -39,6 +39,9 @@ export default function (service, opts = {}) {
     .post('remove', function (doc) {
       doc && (service.emit('user.remove', {id: doc.id}))
     })
+    .post('findOneAndRemove', function (doc) {
+      doc && (service.emit('user.remove', {id: doc.id}))
+    })
     .post('update', function (doc) {
       if (!doc.result.nModified) return
       this.model
@@ -48,6 +51,9 @@ export default function (service, opts = {}) {
             service.emit('user.update', {id: doc.id})
           })
         })
+    })
+    .post('findOneAndUpdate', function (doc) {
+      doc && (service.emit('user.update', {id: doc.id}))
     })
 
   let model = jm.dao({

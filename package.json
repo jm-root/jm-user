@@ -1,6 +1,6 @@
 {
   "name": "jm-user",
-  "version": "1.0.19",
+  "version": "1.0.20",
   "description": "general user service",
   "main": "./lib/index",
   "scripts": {
@@ -30,6 +30,7 @@
     "jm-dao": "^1.0.5",
     "jm-ms-daorouter": "^1.0.0",
     "jm-server": "^1.0.5",
+    "jm-user-mqtt": "^0.0.2",
     "validator": "^7.1.0"
   },
   "devDependencies": {

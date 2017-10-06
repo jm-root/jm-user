@@ -52,14 +52,14 @@ export default function (opts = {}) {
   let router = ms.router()
   this.onReady().then(() => {
     router
-      .use('/:id/avatar', avatar(service, opts))
-      .add('/:id/exists', 'get', function (opts, cb) {
+      .use('/users/:id/avatar', avatar(service, opts))
+      .add('/users/:id/exists', 'get', function (opts, cb) {
         service.findUser(opts.params.id, function (err, doc) {
           if (!doc) cb(null, {ret: 0})
           cb(null, {ret: doc.id})
         })
       })
-      .add('/', 'post', function (opts, cb) {
+      .add('/users', 'post', function (opts, cb) {
         if (opts.ip) {
           opts.data.ip = opts.ip
         }
@@ -78,7 +78,7 @@ export default function (opts = {}) {
             cb(err, t(doc, opts.lng))
           })
       })
-      .add('/:id', 'post', function (opts, cb) {
+      .add('/users/:id', 'post', function (opts, cb) {
         service
           .updateUser(opts.params.id, opts.data)
           .then(function (doc) {
@@ -93,7 +93,7 @@ export default function (opts = {}) {
             cb(err, t(doc, opts.lng))
           })
       })
-      .add('/:id/password', 'post', function (opts, cb) {
+      .add('/users/:id/password', 'post', function (opts, cb) {
         service
           .updatePassword(opts.params.id, opts.data.oldPassword, opts.data.password)
           .then(function (doc) {
@@ -108,7 +108,7 @@ export default function (opts = {}) {
             cb(err, t(doc, opts.lng))
           })
       })
-      .add('/:id/ext', 'post', function (opts, cb) {
+      .add('/users/:id/ext', 'post', function (opts, cb) {
         service
           .updateUserExt(opts.params.id, opts.data)
           .then(function (doc) {
@@ -123,7 +123,7 @@ export default function (opts = {}) {
             cb(err, t(doc, opts.lng))
           })
       })
-      .add('/', 'get', function (opts, cb, next) {
+      .add('/users', 'get', function (opts, cb, next) {
         // search
         let search = opts.data.search
         if (!search) return next()
@@ -150,7 +150,7 @@ export default function (opts = {}) {
         opts.conditions.$or = ary
         next()
       })
-      .use(daorouter(service.user, {
+      .use('/users', daorouter(service.user, {
         list: listOpts,
         get: getOpts
       }))
