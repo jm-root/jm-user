@@ -22,7 +22,10 @@ let log = (err, doc) => {
 let init = function () {
   return new Promise(function (resolve, reject) {
     service.onReady().then(() => {
-      resolve(service.user.findOneAndRemove({account: user.account}))
+      service.user.findOneAndRemove({account: user.account})
+        .then(function () {
+          resolve()
+        })
     })
   })
 }

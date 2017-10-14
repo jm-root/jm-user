@@ -1,5 +1,8 @@
 # History
 
+## 1.0.21 / 2017-10-14
+- validate
+
 ## 1.0.20 / 2017-10-06
 - using jm-user-mqtt
 - change router from /users to /user/users

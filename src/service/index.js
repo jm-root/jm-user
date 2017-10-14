@@ -98,6 +98,16 @@ export default function (opts = {}) {
       return passwordEncrypted.password === hash(password + passwordEncrypted.salt)
     },
 
+    validate: function (opts) {
+      return Promise.resolve()
+        .then(function () {
+          if (opts.account && !isNaN(opts.account)) throw error.err(Err.FA_INVALID_ACCOUNT)
+          if (opts.email && !validator.isEmail(opts.email)) throw error.err(Err.FA_INVALID_EMAIL)
+          if (opts.mobile && !isMobile(opts.mobile)) throw error.err(Err.FA_INVALID_MOBILE)
+          return null
+        })
+    },
+
     /**
      * 更新用户信息
      * @param {string} id
@@ -105,6 +115,7 @@ export default function (opts = {}) {
      * @param cb
      */
     updateUser: function (id, opts, cb) {
+      let self = this
       let c = {_id: id}
 
       if (opts.password && !opts.salt) {
@@ -114,8 +125,10 @@ export default function (opts = {}) {
       }
 
       opts.moditime = Date.now()
-
-      return this.user.update(c, opts, cb)
+      return this.validate(opts)
+        .then(function () {
+          return self.user.update(c, opts, cb)
+        })
     },
 
     /**
@@ -315,7 +328,10 @@ export default function (opts = {}) {
             return doc
           })
       }
-      return this.user.findOne({'$or': query})
+      return this.validate(data)
+        .then(function () {
+          return self.user.findOne({'$or': query})
+        })
         .then(function (doc) {
           if (doc) return Promise.reject(error.err(Err.FA_USER_EXIST))
           return self.user.create(data)
@@ -325,7 +341,6 @@ export default function (opts = {}) {
           return doc
         })
     }
-
   }
   event.enableEvent(o)
 

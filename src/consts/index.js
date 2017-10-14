@@ -5,48 +5,60 @@ export default {
 
   Err: {
     FA_CREATE_USER_UID: {
-      err: BaseErrCode + 1,
+      err: BaseErrCode++,
       msg: 'Create Uid Fail'
     },
     FA_USER_NOT_EXIST: {
-      err: BaseErrCode + 2,
+      err: BaseErrCode++,
       msg: 'User Not Exist'
     },
     FA_USER_EXIST: {
-      err: BaseErrCode + 3,
+      err: BaseErrCode++,
       msg: 'User Already Exist'
     },
     FA_FIND_USER: {
-      err: BaseErrCode + 4,
+      err: BaseErrCode++,
       msg: 'Find User Fail'
     },
     FA_CREATE_USER: {
-      err: BaseErrCode + 5,
+      err: BaseErrCode++,
       msg: 'Create User Fail'
     },
     FA_UPDATE_USER: {
-      err: BaseErrCode + 6,
+      err: BaseErrCode++,
       msg: 'Update User Fail'
     },
     FA_SAVE_USER: {
-      err: BaseErrCode + 7,
+      err: BaseErrCode++,
       msg: 'Save User Fail'
     },
     FA_USER_NOT_ACTIVE: {
-      err: BaseErrCode + 8,
+      err: BaseErrCode++,
       msg: 'User Not Active'
     },
     FA_USER_DELETED: {
-      err: BaseErrCode + 9,
+      err: BaseErrCode++,
       msg: 'User Already Deleted'
     },
     FA_INVALID_USER: {
-      err: BaseErrCode + 10,
+      err: BaseErrCode++,
       msg: 'Invalid User'
     },
     FA_INVALID_PASSWD: {
-      err: BaseErrCode + 11,
+      err: BaseErrCode++,
       msg: 'Invalid Password'
+    },
+    FA_INVALID_ACCOUNT: {
+      err: BaseErrCode++,
+      msg: 'Invalid Account'
+    },
+    FA_INVALID_EMAIL: {
+      err: BaseErrCode++,
+      msg: 'Invalid Email'
+    },
+    FA_INVALID_MOBILE: {
+      err: BaseErrCode++,
+      msg: 'Invalid Mobile'
     }
   }
 }
