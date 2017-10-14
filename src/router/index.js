@@ -49,9 +49,44 @@ export default function (opts = {}) {
     }
   }
 
+  let signon = function (opts, cb) {
+    service.signon(opts.data.username, opts.data.password)
+      .then(function (doc) {
+        cb(null, doc)
+      })
+      .catch(function (err) {
+        let doc = Err.FAIL
+        err.code && (doc.err = err.code)
+        err.message && (doc.msg = err.message)
+        cb(err, t(doc, opts.lng))
+      })
+  }
+
+  let signup = function (opts, cb) {
+    if (opts.ip) {
+      opts.data.ip = opts.ip
+    }
+    service
+      .signup(opts.data)
+      .then(function (doc) {
+        cb(null, {
+          id: doc.id,
+          uid: doc.uid
+        })
+      })
+      .catch(function (err) {
+        let doc = Err.FAIL
+        err.code && (doc.err = err.code)
+        err.message && (doc.msg = err.message)
+        cb(err, t(doc, opts.lng))
+      })
+  }
+
   let router = ms.router()
   this.onReady().then(() => {
     router
+      .add('/signon', 'post', signon)
+      .add('/signup', 'post', signup)
       .use('/users/:id/avatar', avatar(service, opts))
       .add('/users/:id/exists', 'get', function (opts, cb) {
         service.findUser(opts.params.id, function (err, doc) {
@@ -59,25 +94,7 @@ export default function (opts = {}) {
           cb(null, {ret: doc.id})
         })
       })
-      .add('/users', 'post', function (opts, cb) {
-        if (opts.ip) {
-          opts.data.ip = opts.ip
-        }
-        service
-          .signup(opts.data)
-          .then(function (doc) {
-            cb(null, {
-              id: doc.id,
-              uid: doc.uid
-            })
-          })
-          .catch(function (err) {
-            let doc = Err.FAIL
-            err.code && (doc.err = err.code)
-            err.message && (doc.msg = err.message)
-            cb(err, t(doc, opts.lng))
-          })
-      })
+      .add('/users', 'post', signup)
       .add('/users/:id', 'post', function (opts, cb) {
         service
           .updateUser(opts.params.id, opts.data)

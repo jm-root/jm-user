@@ -1,5 +1,8 @@
 # History
 
+## 1.0.22 / 2017-10-14
+- add router /signon /signup
+
 ## 1.0.21 / 2017-10-14
 - validate
 
