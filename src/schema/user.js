@@ -24,6 +24,8 @@ let schemaDefine = {
   moditime: {type: Date}, // 修改时间
   ip: {type: String}, // 注册时ip
   name: {type: String}, // 真实姓名
+  idtype: {type: Number, default: 0}, // 身份证类型，默认0 居民身份证
+  idcard: {type: String}, // 身份证号
   address: {type: String}, // 详细地址
   signature: {type: String}, // 签名
   tags: [String],
