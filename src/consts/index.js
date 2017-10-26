@@ -59,6 +59,10 @@ export default {
     FA_INVALID_MOBILE: {
       err: BaseErrCode++,
       msg: 'Invalid Mobile'
+    },
+    FA_ACCOUNT_BAN: {
+        err: BaseErrCode++,
+        msg: 'Account Disabled'
     }
   }
 }
