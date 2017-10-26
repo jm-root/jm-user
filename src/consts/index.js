@@ -62,7 +62,7 @@ export default {
     },
     FA_ACCOUNT_BAN: {
         err: BaseErrCode++,
-        msg: 'This account has been disabled'
+        msg: 'Account Disabled'
     }
   }
 }
