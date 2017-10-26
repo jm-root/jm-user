@@ -261,6 +261,7 @@ export default function (opts = {}) {
       return this.findUser(username)
         .then(function (doc) {
           if (!doc) throw error.err(Err.FA_USER_NOT_EXIST)
+          if (!doc.active) throw error.err(Err.FA_ACCOUNT_BAN)
           if (!self.checkPassword(doc, password)) throw error.err(Err.FA_INVALID_PASSWD)
           self.emit('signon', {id: doc.id})
           return {id: doc.id}

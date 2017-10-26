@@ -12,5 +12,6 @@ export default {
   'Invalid Password': '无效密码',
   'Invalid Account': '无效账户',
   'Invalid Email': '无效邮箱',
-  'Invalid Mobile': '无效手机'
+  'Invalid Mobile': '无效手机',
+  'This account has been disabled':'该账号已被封停'
 }
