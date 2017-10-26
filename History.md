@@ -1,5 +1,8 @@
 # History
 
+## 1.0.24 / 2017-10-26
+- FA_USER_BAN
+
 ## 1.0.22 / 2017-10-14
 - add router /signon /signup
 
