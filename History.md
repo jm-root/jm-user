@@ -1,5 +1,8 @@
 # History
 
+## 1.0.25 / 2018-05-11
+- fixed bug in router
+
 ## 1.0.24 / 2017-10-26
 - FA_USER_BAN
 
