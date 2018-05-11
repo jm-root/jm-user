@@ -90,7 +90,7 @@ export default function (opts = {}) {
       .use('/users/:id/avatar', avatar(service, opts))
       .add('/users/:id/exists', 'get', function (opts, cb) {
         service.findUser(opts.params.id, function (err, doc) {
-          if (!doc) cb(null, {ret: 0})
+          if (!doc) return cb(null, {ret: 0})
           cb(null, {ret: doc.id})
         })
       })

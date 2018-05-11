@@ -4,8 +4,8 @@
   "description": "general user service",
   "main": "./lib/index",
   "scripts": {
-    "start": "node node_modules/jm-server/bin/jm-server",
-    "cluster": "node node_modules/jm-server/bin/jm-server --cluster",
+    "start": "jm-server",
+    "cluster": "jm-server --cluster",
     "test": "node node_modules/babel-cli/bin/babel-node ./node_modules/mocha/bin/_mocha test"
   },
   "repository": {
