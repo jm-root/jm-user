@@ -5,7 +5,30 @@ let user = {
   password: '123',
   mobile: '13600000000',
   email: 'jeff@jamma.cn',
-  nick: 'jeff'
+  nick: 'jeff',
+  ext: {
+    a: 123,
+    o: {
+      name: 123,
+      b: 345
+    },
+    o1: 456,
+    aa: [1, 2],
+    ao: [{a: 1}, {b: 1}]
+  }
+}
+let ext = {
+  a: 1234,
+  o: {
+    name: 1234,
+    b: 3456
+  },
+  o2: {
+    m: '222',
+    n: 1
+  },
+  aa: [1, 3],
+  ao: [{a: 2}, {c: 1}]
 }
 
 let service = null
@@ -96,11 +119,30 @@ describe('service', () => {
     expect(doc).toBeTruthy()
   })
 
-  test('updateUserExt', async () => {
+  test('updateUserExt merge', async () => {
     await prepare()
     let doc = await service.findUser(user.account)
     expect(doc.account === user.account).toBeTruthy()
-    doc = await service.updateUserExt(doc.id, {title: 'engineer'})
+    doc = await service.updateUserExt(doc.id, ext)
+    console.log('updateUserExt merge: \n%s', JSON.stringify(doc, null, 2))
+    expect(doc).toBeTruthy()
+  })
+
+  test('updateUserExt replace', async () => {
+    await prepare()
+    let doc = await service.findUser(user.account)
+    expect(doc.account === user.account).toBeTruthy()
+    doc = await service.updateUserExt(doc.id, ext, service.Mode.replace)
+    console.log('updateUserExt replace: \n%s', JSON.stringify(doc, null, 2))
+    expect(doc).toBeTruthy()
+  })
+
+  test('updateUserExt assign', async () => {
+    await prepare()
+    let doc = await service.findUser(user.account)
+    expect(doc.account === user.account).toBeTruthy()
+    doc = await service.updateUserExt(doc.id, ext, service.Mode.assign)
+    console.log('updateUserExt assign: \n%s', JSON.stringify(doc, null, 2))
     expect(doc).toBeTruthy()
   })
 
