@@ -1,5 +1,8 @@
 # History
 
+## 1.1.0 / 2018-06-27
+- es6
+
 ## 1.0.25 / 2018-05-11
 - fixed bug in router
 

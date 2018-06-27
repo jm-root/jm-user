@@ -1,10 +1,29 @@
 {
   "appenders": [
     {
+      "type": "dateFile",
+      "filename": "logs/console",
+      "pattern": "-yyyyMMdd.log",
+      "alwaysIncludePattern": true,
+      "category": [
+        "console"
+      ]
+    },
+    {
+      "type": "dateFile",
+      "filename": "logs/user",
+      "pattern": "-yyyyMMdd.log",
+      "alwaysIncludePattern": true,
+      "category": [
+        "user"
+      ]
+    },
+    {
       "type": "console"
     }
   ],
   "replaceConsole": true,
   "levels": {
+    "user": "info"
   }
 }
