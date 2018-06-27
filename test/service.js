@@ -1,6 +1,6 @@
-import chai from 'chai'
-import config from '../config'
-import $ from '../src'
+const chai = require('chai')
+const config = require('../config')
+const $ = require('../src')
 
 let expect = chai.expect
 
