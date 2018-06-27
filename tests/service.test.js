@@ -1,11 +1,4 @@
-const chai = require('chai')
-const config = require('../config')
-const $ = require('../src')
-
-let expect = chai.expect
-
-let service = $(config)
-let router = service.router()
+const $ = require('./service')
 
 let user = {
   account: 'jeff',
@@ -15,190 +8,163 @@ let user = {
   nick: 'jeff'
 }
 
-let log = (err, doc) => {
-  err && console.error(err.stack)
+let service = null
+beforeAll(async () => {
+  await $.onReady()
+  service = $
+})
+
+let init = async function () {
+  let doc = await service.user.findOneAndRemove({account: user.account})
+  return doc
 }
 
-let init = function () {
-  return new Promise(function (resolve, reject) {
-    service.onReady().then(() => {
-      service.user.findOneAndRemove({account: user.account})
-        .then(function () {
-          resolve()
-        })
-    })
-  })
+let prepare = async function () {
+  await init()
+  let doc = await service.signup(user)
+  return doc
 }
 
-let prepare = function () {
-  return init().then(function () {
-    return service.signup(user)
-  })
-}
-
-describe('service', function () {
-  it('t', function (done) {
+describe('service', () => {
+  test('t', async () => {
     let o = service.t('Create Uid Fail', 'zh_CN')
-    expect(o === '生成UID失败').to.be.ok
-    done()
+    expect(o === '生成UID失败').toBeTruthy()
   })
 
-  it('password', function (done) {
+  test('password', async () => {
     let o = service.encryptPassword('123')
-    expect(service.checkPassword(o, '123')).to.be.ok
-    done()
+    expect(service.checkPassword(o, '123')).toBeTruthy()
   })
 
-  it('findOneAndUpdate', function (done) {
-    init()
-      .then(function () {
-        return service.signup(user)
-      })
-      .then(function (doc) {
-        return service.user.findOneAndUpdate({account: user.account}, {nick: 'jeff234'})
-      })
-      .then(function (doc) {
-        log(null, doc)
-        expect(doc).to.be.ok
-        done()
-      })
+  test('findOneAndUpdate', async () => {
+    await init()
+    let doc = await service.signup(user)
+    doc = await service.user.findOneAndUpdate({account: user.account}, {nick: 'jeff234'})
+    expect(doc).toBeTruthy()
   })
 
-  it('create user', function (done) {
-    init().then(function () {
-      service.user.create(user, function (err, doc) {
-        log(err, doc)
-        expect(err === null).to.be.ok
-        service.user.create(user, function (err, doc) {
-          log(err, doc)
-          expect(err !== null).to.be.ok
-          done()
-        })
-      })
-    })
+  test('create user', async () => {
+    await init()
+    let doc = await service.user.create(user)
+    try {
+      doc = await service.user.create(user)
+    } catch (e) {
+
+    }
   })
 
-  it('signup cb', function (done) {
+  test('signup cb', async () => {
     init().then(function () {
       service.signup(user, function (err, doc) {
         log(err, doc)
-        expect(err === null).to.be.ok
-        done()
+        expect(err === null).toBeTruthy()
       })
     })
   })
 
-  it('signup', function (done) {
+  test('signup', async () => {
     init().then(function () {
       service.signup(user)
         .then(function (doc) {
-          expect(doc !== null).to.be.ok
+          expect(doc !== null).toBeTruthy()
           return service.signup(user)
         })
         .catch(function (err) {
           log(err)
-          expect(err !== null).to.be.ok
-          done()
+          expect(err !== null).toBeTruthy()
         })
     })
   })
 
-  it('findUser account', function (done) {
+  test('findUser account', async () => {
     prepare().then(function () {
       service.findUser(user.account, function (err, doc) {
         log(err, doc)
-        expect(doc.account === user.account).to.be.ok
+        expect(doc.account === user.account).toBeTruthy()
         service.findUser(doc.uid, function (err, doc) {
           log(err, doc)
-          expect(doc.account === user.account).to.be.ok
+          expect(doc.account === user.account).toBeTruthy()
           service.findUser(doc.id, function (err, doc) {
             log(err, doc)
-            expect(doc.account === user.account).to.be.ok
-            done()
+            expect(doc.account === user.account).toBeTruthy()
           })
         })
       })
     })
   })
 
-  it('findUser email', function (done) {
+  test('findUser email', async () => {
     prepare().then(function () {
       service.findUser(user.email, function (err, doc) {
         log(err, doc)
-        expect(doc.account === user.account).to.be.ok
-        done()
+        expect(doc.account === user.account).toBeTruthy()
       })
     })
   })
 
-  it('findUser mobile', function (done) {
+  test('findUser mobile', async () => {
     prepare().then(function () {
       service.findUser(user.mobile, function (err, doc) {
         log(err, doc)
-        expect(doc.account === user.account).to.be.ok
-        done()
+        expect(doc.account === user.account).toBeTruthy()
       })
     })
   })
 
-  it('updateUser cb', function (done) {
+  test('updateUser cb', async () => {
     prepare().then(function () {
       service.findUser(user.account, function (err, doc) {
         log(err, doc)
-        expect(doc.account === user.account).to.be.ok
+        expect(doc.account === user.account).toBeTruthy()
         service.updateUser(doc.id, {password: '123', gender: 'man'}, function (err, doc) {
           log(err, doc)
-          expect(!err && doc).to.be.ok
-          done()
+          expect(!err && doc).toBeTruthy()
         })
       })
     })
   })
 
-  it('updateUser', function (done) {
+  test('updateUser', async () => {
     prepare().then(function () {
       service.findUser(user.account, function (err, doc) {
         log(err, doc)
-        expect(doc.account === user.account).to.be.ok
+        expect(doc.account === user.account).toBeTruthy()
         service.updateUser(doc.id, {password: '123', gender: 'man'})
           .then(function (doc) {
-            expect(doc).to.be.ok
-            done()
+            expect(doc).toBeTruthy()
           })
       })
     })
   })
 
-  it('updateUserExt', function (done) {
+  test('updateUserExt', async () => {
     prepare().then(function () {
       service.findUser(user.account, function (err, doc) {
         log(err, doc)
-        expect(doc.account === user.account).to.be.ok
+        expect(doc.account === user.account).toBeTruthy()
         service.updateUserExt(doc.id, {title: 'engineer'}, function (err, doc) {
           log(err, doc)
-          expect(err === null).to.be.ok
-          done()
+          expect(err === null).toBeTruthy()
         })
       })
     })
   })
 
-  it('updatePassword', function (done) {
+  test('updatePassword', async () => {
     prepare().then(function () {
       service.findUser(user.account, function (err, doc) {
         log(err, doc)
-        expect(doc.account === user.account).to.be.ok
+        expect(doc.account === user.account).toBeTruthy()
         let id = doc.id
         service.updateUser(doc.id, {password: '123'}, function (err, doc) {
           log(err, doc)
-          expect(err === null).to.be.ok
+          expect(err === null).toBeTruthy()
           service.updatePassword(id, user.password, '1234', function (err, doc) {
             log(err, doc)
-            expect(doc && !doc.err).to.be.ok
+            expect(doc && !doc.err).toBeTruthy()
             service.signon(user.account, '1234', function (err, doc) {
               log(err, doc)
-              expect(doc && doc.id !== null).to.be.ok
-              done()
+              expect(doc && doc.id !== null).toBeTruthy()
             })
           })
         })
@@ -206,7 +172,7 @@ describe('service', function () {
     })
   })
 
-  it('signon', function (done) {
+  test('signon', async () => {
     prepare().then(function () {
       service.findUser(user.account)
         .then(function (doc) {
@@ -216,8 +182,7 @@ describe('service', function () {
           return service.signon(user.account, user.password)
         })
         .then(function (doc) {
-          expect(doc && doc.id).to.be.ok
-          done()
+          expect(doc && doc.id).toBeTruthy()
         })
         .catch(function (err) {
           log(err)
@@ -225,7 +190,7 @@ describe('service', function () {
     })
   })
 
-  it('signon cb', function (done) {
+  test('signon cb', async () => {
     prepare().then(function () {
       service.findUser(user.account)
         .then(function (doc) {
@@ -234,8 +199,7 @@ describe('service', function () {
         .then(function (doc) {
           service.signon(user.account, user.password, function (err, doc) {
             log(err, doc)
-            expect(doc && doc.id).to.be.ok
-            done()
+            expect(doc && doc.id).toBeTruthy()
           })
         })
         .catch(function (err) {
@@ -244,24 +208,14 @@ describe('service', function () {
     })
   })
 
-  it('avatar save', function (done) {
+  test('avatar save', async () => {
     prepare().then(function () {
       service.avatar
         .save('123', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAeCAMAAACMnWmDAAAAGFBMVEUAAABQUFAAAAAAAAAAAAAAAAAAAAAAAABiRp8mAAAACHRSTlMA/wAAAAAAACXRGJEAAAmJSURBVHjaAX4JgfYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQEAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAQAAAAAAAQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAQEBAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEBAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQEBAQEBAQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQEAAAAAAAABAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEBAQEAAAAAAQEBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAQEAAAAAAAABAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQEBAAAAAAAAAAEBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAQAAAAAAAAEBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEBAAAAAAAAAAEBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEBAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEBAAABAQEBAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQEAAAAAAAAAAQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEBAQEBAQEBAQEBAAAAAAAAAAAAAAAAAAAAAAAAAQEBAQEAAAAAAAAAAAAAAQEBAQEBAQEBAQEBAQEAAAAAAAAAAAAAAAEBAQEBAQEBAQEAAQEBAQEAAAAAAAEBAAAAAAAAAAAAAAAAAAAAAAABAQEBAQEBAQAAAAAAAAAAAQEBAQEBAQEBAQEBAQEAAAAAAAAAAAAAAQEBAQEBAQEBAQEAAQEBAAAAAAAAAAABAQAAAAAAAAAAAAAAAAAAAAABAQEBAQEBAQAAAAAAAAAAAAAAAAAAAAABAQAAAAAAAAAAAAAAAAABAQEAAAAAAAAAAAAAAQEAAAAAAAAAAAABAQAAAAAAAAAAAAAAAAAAAAEBAQAAAAEBAQEAAAAAAAAAAAAAAAAAAAABAQAAAAAAAAAAAAAAAAABAQAAAAAAAAAAAAAAAQEAAAAAAAAAAAABAQAAAAAAAAAAAAAAAAAAAAEBAQAAAAEBAQEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAABAQAAAAAAAAAAAAAAAQEAAAAAAAAAAAABAQAAAAAAAAAAAAAAAAAAAAEBAQAAAAEBAQEAAAAAAAAAAAAAAAAAAAEBAAAAAAAAAAAAAAAAAAEBAQAAAAAAAAAAAAAAAQEBAAAAAAAAAAEBAAAAAAAAAAAAAAAAAAAAAAEBAQAAAAEBAQEAAAAAAAAAAAAAAAAAAAEBAAAAAAAAAAAAAAAAAAEBAAEBAQEBAAAAAAAAAAEBAQAAAAABAQEAAAAAAAAAAAAAAAAAAAAAAAEBAQAAAAEBAQEAAAAAAAAAAAAAAAAAAAEBAAAAAAAAAAAAAAAAAAEBAQEBAQEBAQEAAAAAAAABAQEBAQEBAQAAAAAAAAAAAAAAAAAAAAAAAAEBAQAAAAEBAQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEBAQAAAAAAAQEAAAAAAAAAAQEBAQEAAAAAAAAAAAAAAAAAAAAAAAAAAAEBAQAAAAEBAQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEBAQAAAAEBAQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEBAQAAAAEBAQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEBAQAAAAEBAQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEBAAAAAAAAAAAAAAEBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEBAQAAAAEBAQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEBAQAAAAAAAAAAAQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEBAQAAAAEBAQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEBAQEAAAAAAAEBAQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEBAQAAAAEBAQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAQEBAQEBAQEBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAQEBAQEBAQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEBAQEBAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAQEBAQEBAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQEBAQEBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADFAgGM9lrxNwAAAABJRU5ErkJggg==')
         .then(function (doc) {
-          expect(doc).to.be.ok
+          expect(doc).toBeTruthy()
           console.log(service.avatar.get('123'))
-          done()
         })
-    })
-  })
-
-  it('router', function (done) {
-    prepare().then(function () {
-      router.get('/users', {rows: 2}, function (err, doc) {
-        expect(doc && doc.page).to.be.ok
-        done()
-      })
     })
   })
 })
