@@ -34,6 +34,9 @@ describe('service', () => {
   test('password', async () => {
     let o = service.encryptPassword('123')
     expect(service.checkPassword(o, '123')).toBeTruthy()
+    expect(!service.checkPassword(o, null)).toBeTruthy()
+    expect(!service.checkPassword(null, null)).toBeTruthy()
+    expect(!service.checkPassword(null, '')).toBeTruthy()
   })
 
   test('findOneAndUpdate', async () => {
