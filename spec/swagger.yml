@@ -1,0 +1,59 @@
+openapi: 3.0.0
+# Added by API Auto Mocking Plugin
+servers:
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/jm-root/jm-user/1.0.0
+info:
+  version: "1.0.0"
+  title: jm-user-api
+  description: 用户系统API
+paths:
+  /user/users/{id}:
+    post:
+      description: 更新用户信息
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserInfo'
+      responses:
+        '200':
+          description: 更新成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RetInfo'
+    get:
+      description: 获取用户信息
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserInfo'
+components:
+  schemas:
+    UserInfo:
+      type: object
+      properties:
+        nick:
+          type: string
+          example: 'jeff'
+        ext:
+          type: object
+      description: 用户信息
+    RetInfo:
+      type: object
+      properties:
+        ret:
+          type: integer
+          format: int32
+          example: 1
+      description: 结果信息
